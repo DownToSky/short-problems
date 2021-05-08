@@ -1,0 +1,132 @@
+Nim
+----
+Nim is a game played with heaps of stones. Each turn, a player removes
+a positive number of stone from a heap. First player without any moves
+loses(no stones left)(normal play, player who has to take the last stone loses in misere play). 
+
+What if we have one heap?
+    First player takes all
+
+If we have 2 heaps, what is the winnig strategy? 
+    mirroring opponent's moves
+
+Now let's talk about(http://web.mit.edu/sp.268/www/nim.pdf, wiki):
+Combinatorial games(is not strongly defined):
+    there are two players
+    there are finite sets of positions availabe in game
+    there are sets of rules that dictate where a player can move(both players know it and is deterministic)
+    players alternate moving
+    first player unable to move, loses
+    game ends in finite time
+    no ties(in some definitions)
+    ex: chess, go, tic-tac-toe, sudoku, game of life automata(loosely)
+
+Impartial games:
+    games where set of posible moves at a turn depends only on the position, not the player
+        in other words, the only difference between player 1 and player 2 is that player 1 goes first
+    can be analyzed using Spraggue_Grundy theorem
+    ex: Nim, game of chomp, Sprouts, subtraction game
+        what is chomp:
+            you have an mxn chocolate-bar, where the top-left cell is poisoned
+            each player takes and ixj blocks from bottom right where there is at least a cell
+            in the ixj block that wasn't taken before.
+            If both player play perfectly, who will win?
+                Player1:
+                    assume player2 has a winning strategy against any initial first-player move.
+                    suppose player1 takes bottom right square. Player2 will play the winning strategy,
+                    but player1 could make that play before player1.(non constructive proof)
+                We don't know the winning strategy at the moment.
+    sprouts
+        start with some number of spots, every turn one of the playrs draws a line between two spots.
+        the line can be curved. It should not cross or touch any line including itself. Each new line
+        will have a new spot somehwher in between the line. No spot can have more that three lines
+        attached to it. A line can be between the same spot.
+        the player who makes the last move, wins.(this is normal play)
+        
+        Does the game end?(why does it have finite moves?)
+            It does. Think of how much capacity you'd lose with each move?
+        What is the minimum number of moves?(from wiki page)
+            *)Maximize the number of capacity we lose:
+                there are 3c capacities from the start. Connect every 
+        What is the maximum number of moves?(from wiki page)
+
+	what is subtraction game?
+            there is (commonly 1 pile of n objects). The rules are same as Nim except there is an upperbound k
+            on how much can be removed at every turn.
+        Win condition:
+            second player can win iff n=0 (mod k+1 in normal play) (write a few examples to see why)
+            (write game tree based on P and N positions)
+Parisian games:
+    a CG that is not impartial
+    example, chess(since white can only move white pieces)
+
+More about Nim:
+    P-positions are positions that secure a win for the Previous player
+    N-positions are positions that secure a win for the next player
+    Remember that this is an impartial game, so every arrangement is either a P or N position
+    Draw the game tree
+        label are terminal positions P
+        label every position that can reach a P position N
+        label every position that moves only to N, P
+        All labels are either P or N(can proof with contradiciton)
+
+    XOR:
+        what is XOR?
+        0^0=0
+        1^1=0
+        1^0=1
+        0^1=1
+        doing xor on decimals
+    
+    think about who wins with optimal play if piles={2,2,2,2,...,2}
+    what if piles={3,3,3,3,3,...,3}
+    and so on....
+
+    Theorem: the winning strategy in normal play Nim is to finish every move with nim-sum 0.
+    
+    Lemma1: if Nim0sum is 0 after a player's turn, the next player will change the nim-sum.
+    Let the number of stones in pile be x1,x2,....,xn
+    Let s=x1^x2^....^xn
+    Let t be nim-sum of piles after the move: t=y1^....^yn
+    if s=0, the next move causes some xk!=yk while the rest of xi=yi for i!=k since only one pile changes
+
+        t=0^t=s^s^t=s^(x1^....^xn)^(y1^....^yn)=s^(x1^y1)^....^(xk^yk)=s^xk^yk=s^xk^yk
+
+    if s=0, then t must be non-zero since xk^yk!=0. Therefore, if the nim-sum is 0 on one turn, it will be
+    non-zero after the next move.
+    
+    Lemma2: It's always possible to make the nim-sum zero if it wasn't already 0.
+    let d be the position of the most significant bit in s(as defined above). Choose pile xk such that
+    it's most significant bit is also in position d(it's possible for k to exist because of properties of
+    XOR). Choose the new value of the pile yk=s^xk. The new nim-sum is:
+
+        t=x^xk^yk(same proccess as lemma1)=s^xk^xk^s=s^s^xk^xk=0
+
+    Proof: start by making the nim-sum 0. Next player has to make the nim-sum non-zero. The nim-sum of
+    any number of zeroes is 0, so your opponent will never give you stacks of all size 0, which means
+    you will never lose(= you will always win)
+    
+(Euler301)
+    How to brute force?
+        we can memoize, but its still terrible 
+    what if we use the nim-sum?
+        still bad, why?
+    hint: what is X(n,2n,3n) for:
+        0<n<2
+        0<n<3
+        0<n<4
+          .
+          .
+          .
+          .
+        _____
+
+    What about when n<=2^1
+                    n<=2^2
+                    .
+                    .
+                    .
+                    ______
+
+(Euler310)
+(Euler409)

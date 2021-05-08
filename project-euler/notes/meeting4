@@ -1,0 +1,105 @@
+Recurrences:
+------------
+Are functions with a  base case that are described in terms of themselves.
+e.g.    f(1) = 1    for n>1 f(n) = f(n-1) + 1
+        some reccurences can be "solved" into a closed-form which is
+        specifically useful for asymptotic analysis
+
+You have a 1xn floor we want to colour by 1x2 red tiles, 1x3 blue tiles, and 1x3 white tiles.
+How many ways to tile this floor?
+An : denotes the number of ways to tile a 1xn floor
+An =
+    A(n-2)+     #the left-most tile is red
+    A(n-3)+     #the left-most tile is blue
+    A(n-3)+     #the left-most tile is white
+
+
+
+Then the reccurence is 
+Unrolling the Reccurence:
+-------------------------
+    Example: Tower of Hanoi
+        there are three stacks with three disks of different size in one
+        stack ordered from top to bottom. How to move the filled stack
+        to another stack when:
+            no larger disk can be on a smaller disk at any point of time
+            only one disk can be moved every time
+            can only move a disk from top of one stack to top of another
+        Using recursion to solve this:
+            def move(height, sourceS, destS, helperS):
+                if n is 0:
+                    return 0
+                m1 = move(height-1, sourceS, helperS, destS) #T(n-1) moves
+                                                        #move the top disk
+                m2 = move(height-1, helperS, destS, sourceS) #T(n-1) moves again
+                return m1+m2+1
+        The corresponding reccurence is T(n)=2T(n-1)+1, T(0)=0
+        Consider T(n): (unrolling the recurrence)
+            T(n) = 2T(n-1)+1 = 4T(n-2)+3 = 8T(n-3)+7 = 16T(n-4)+15
+                    ....
+        so we can guess that:
+            T(n) = 2^(n) T(0) + 2^(n) - 1 = 2^n - 1
+
+        Now we have to prove the guess using induction:
+            Base:   T(0) = 2^0 -1 = 0 is true
+            I.H. if T(n) = 2^n -1 is true show T(n+1) = 2^(n+1) -1
+            T(n+1) = 2(T(n))+1 = 2^(n+1) -2+1 = 2^(n+1) - 1 is then true
+
+Linear Reccurences:
+-------------------
+    Solving linear rccurences is similar to the method of undetermined
+    coefficients for solving linear ordinary differential equations
+    
+    Homogeneous reccurences:
+        Look at F(n) = 2F(n-1), F(1) = 1
+        What does it generate? 1, 2 ,4 , 8, ...
+        the we can guess F(n) = 2^(n-1)
+
+        Example: fibonacci (how many ways to go up the stairs with steps of size 1 or 2) 
+                F(n) = F(n-1) + F(n-2), F(0) = 0, F(1) = 1
+                Let's assume F(n) = t^n for some t is a solution:
+                t^n = t^(n-1) + t^(n-2) 
+                then:
+                t^(n-2) (t^2 - t - 1) = 0 
+                a) t^(n-2) = 0 is not possible since the base cases are nonzero
+                b) then (t^2 - t -1) = 0 for some t
+                    then t1 =(1+sqrt(5))/2 or t2 = (1-sqrt(5))/2 are two specific
+                    solutions.
+                then similar to solving homgeneous linear differential equations
+                we know the linear combination of them is a general solution:
+                F(n) = C1 * t1^n + C2 * t2^n for some C1 and C2
+                to solve for C1 and C2, use the base cases and solve the system:
+                    F(1) = 1 = C1 * t1 + C2 * t2 
+                    F(0) = 0 = C1 + C2
+                    if we solve the system, we get:
+                        C1 = 1/sqrt(5) , C2 = -1/sqrt(5)
+
+            Similar problem: How many steps if we could also take steps of size 3?
+                             This will lead to tribonacci numbers
+
+            Nonhomogeneous: Very similar to method used for differential equations.
+                        Solve the homogeneous part and then add the particular solution
+                        to the nonhomogeneous and add them up then solve for initial
+                        condition.
+                        Example: F(n) = F(n-1) + n, F(1) = 1
+                                we have
+                                F(n) - F(n-1) = n
+                                solve for F(n) - F(n-1) = 0
+                                then guess F(n) = t^n
+                                t^(n-1)(t-1) = 0
+                                t = 1 
+                                So the gen. solution to homo. part: F(n) = c * 1^n (I)
+                                
+                                now find a particualr solution to nonhomo. part:
+                                guess F(n) = A n^2 + B n + D
+                                then A n^2 + B n + D - A(n-1)^2 - B(n-1) -D = n
+                                which will finally become:
+                                2A n + A + B = n then A = 1/2 , B = 1/2
+                                so F(n) = n^2/2 + n/2 is a particular solution
+
+                                Gen. sol. to nonhomo. :
+                                F(n) = C + n^2/2 + n/2
+                                now for F(1) = 1:
+                                    1 = C+1/2+1/2 
+                                    then c = 0
+                                so F(n) = n^2/2 + n/2 = n(n+1)/2

@@ -1,0 +1,129 @@
+Talk about timing: We'll meet at 8:30 pm
+
+Ask ppl to introduce themselves
+
+Have they seen proj euler? intro to website: 
+    . it has discrete math problems that you have to solve with optimal algorithm
+    . under a minute as a general rule
+    . Currently 500+ problems
+    . their mysql database had problem so the "solved" section is bugged
+    . don't forget to get the private key since they don't "restore" passwords. I lost it.
+
+taking 1 or 2 steps, how many ways to go up n steps?
+    . Does anyone realize what reccerunce it is?
+
+introduction to fibonacci numbers and the bunny problem.
+    . Leonardo Fibonacci came up with this:
+        * lets say we have a baby male and a baby female rabbit. Every adult pair makes 
+          a male and a female baby next month
+        *month0: 2 babies (0pair)
+        *month1: 2 adults (1pair)
+        *month2: 2 adults 2 babies (1pair)
+        *month3: 4 adults 2 babies (2pair)
+        *month4: 6 adults 4 babies (3pairs)
+        *month5: 10 adults 6 babies (5pairs)
+        * and so on..
+        * 0,1,1,2,3,5,...
+        * (normally the total number of pairs is counted which would give the reccurence: 
+          1,1,2,3,5,... but I like the new one >.>)
+    . Used in fibonacci heaps which have better amortized run time 
+        but there is a big constant before the big-O
+    . Used in finding the worst case for euclids method of finding gcd (two consecutive fibonacci numbers)
+        * Ex:
+            gcd(1071,462)=gcd(462,147)=gcd(147,21)=21
+            really nice example for wiki: 
+            https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Euclidean_algorithm_1071_462.gif/170px-Euclidean_algorithm_1071_462.gif
+    . lim Fn/Fn_1 approximates golden ratio: (1+sqrt(5))/2=~1.618033
+the recursive method
+    Fn=Fn_1+Fn_2 F1=1 F0=0
+    How many function calls does this give us?
+    n=0:1
+    n=1:1
+    n=2:3
+    n=3:5
+    n=4:9
+    Observe that if T(n) is the number of function calls for finding Fn
+    then T(n)=T(n-1)+T(n-2)+1       (the 1 is for the original function)]
+    This is called Leonardo numbers! number of tree nodes in Fibonacci tree of order n 
+        (this is exponential we'll see it soon..)
+
+solving the recursion: is the useful for us?
+    . How to solve:
+        * Fibonacci forms a Homogeneous Linear Recurrence: 
+            , Each term of a sequence is a linear function of earlier terms in the sequence.
+            , Similar to homogeneous linear differential equation, any linear combination of them will form a solution
+            , just like how we guessed f(t)=e^(st) for some t, guess Fn=r^n then find characteristic plynom.
+                Fn=Fn_1+Fn_2
+                r^2-r-1=0
+                r1=(1+5^0.5)/2
+                r2=(1-5^0.5)/2
+                Then Fn=a1 x r1+ a2 x r2 is the general sol.
+                plug the base case and find the initial-value solution
+                here, a1=-a2=1/5^0.5
+            , There are the non-homo. finding the closed form is similar to the one in dif. eq.
+                is of the form: an=c1 an_1+c2 an_2+.....+ck an_k+ f(n)
+    . Observe that for Leonardo numbers: (it is non-homo)
+        a(n) = (2/sqrt(5))*((1+sqrt(5))/2)^(n+1) - 2/sqrt(5)*((1-sqrt(5))/2)^(n+1) - 1
+      meaning that the runtime of the previous recursive algorithm is exponential since every function does 1 or 
+      2 operations and there are exponential number of functions
+        O(<golden ratio>^n)
+    . This does not help us since 5^0.5 is irrational number and programs can't compute them
+        with perfect precisoin eventhough Fibonacci numbers are integers
+
+memoization with recursion
+    * What if you have an array that keeps track of the ones you already computed?
+        Will be linear time since every computation happens once and the fibonacci
+        tree turns into a linked list(kinda)
+    - problem 2
+simple iteration
+    * But hey, we don't need an array of size n if we just want to n-th fibonacci
+      We just need 4 variables (constant) F1, F2, F3 and a counter. Compute F3 each time and let F1=F2, F2=F3
+    - problem 25
+    - problem 104
+
+finding Fn in log n time (make them come up with it)
+    We can show that:
+    |1 1|^n   |Fn+1 Fn  |
+    |1 0|   = |Fn   Fn_1|
+    easily by induction
+    In general, you can do this for any homo. linear reccurence
+    F(n) = F(n-1) + 2F(n-2) + F(n-3),  F(1) = 1; F(2) = 1; F(3) = 2
+
+|f(4)|    = MATRIX * |f(1)|
+|f(3)|               |f(2)|
+|f(2)|               |f(3)|
+
+|f(4)|   = |1 2 1| * |f(1)|
+|f(3)|     |* * *|   |f(2)|
+|f(2)|     |* * *|   |f(3)|
+
+|f(4)|   = |1 1 1| * |f(1)|
+|f(3)|     |0 0 1|   |f(2)|
+|f(2)|     |* * *|   |f(3)|
+
+|1 1 1|
+|0 0 1|
+|0 1 0|
+
+|f(n)|   =   |1 1 1|^(N-3) * |f(1)|
+|f(n-1)|     |0 0 1|         |f(2)|
+|f(n-2)|     |0 2 0|         |f(3)|
+    How does this helps us?
+        You can exponentiate x^n in O(log n)!
+    to find x^n:
+        find x^(n/2) and multiply by itself
+        if n is odd multiply that by x too
+    How many times do we divide n?
+    log n (that's what log base 2 means)
+    we multiply a matrix of constant size at most twice in a log(n) loop
+    O(log n)
+    - problem 48 
+    - problem 122
+    
+
+
+Next week's problems:
+    -109
+    -126
+
+
